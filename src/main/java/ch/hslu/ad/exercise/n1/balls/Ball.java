@@ -15,6 +15,8 @@
  */
 package ch.hslu.ad.exercise.n1.balls;
 
+import java.util.Random;
+
 /**
  * Description of class Ball
  */
@@ -23,23 +25,33 @@ public final class Ball implements Runnable {
     private final Circle circle;
     private final int size;
     private final int offset;
+    private static Random random = new Random();
 
     /**
      * Erzeugt einen Ball mit gegebenen Parametern Grösse, Position und Farbe.
      *
-     * @param size Grösse des Balls.
-     * @param xPos X-Position des Balls.
-     * @param yPos Y-Position des Balls.
+     * @param size  Grösse des Balls.
+     * @param xPos  X-Position des Balls.
+     * @param yPos  Y-Position des Balls.
      * @param color Farbe des Balls.
      */
     public Ball(final int size, final int xPos, final int yPos, String color) {
-        this.size = 0;
-        this.circle = null;
+        this.size = size;
         this.offset = 0;
+        this.circle = new Circle(size, xPos, yPos, color);
     }
 
     @Override
     public void run() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        circle.makeVisible();
+        while (circle.getY() + size < Canvas.getCanvas().getHeight()) {
+            int speed = this.getRandomNumber(1, 5);
+            circle.moveVertical(speed);
+        }
+        circle.makeInvisible();
+    }
+
+    private int getRandomNumber(int min, int max) {
+        return random.nextInt((max - min) + 1) + min;
     }
 }
