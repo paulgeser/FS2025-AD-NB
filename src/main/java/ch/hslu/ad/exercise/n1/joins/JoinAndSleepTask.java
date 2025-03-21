@@ -31,8 +31,8 @@ public class JoinAndSleepTask implements Runnable {
 
     /**
      * Erzeugt einen Task mit Namen.
-     * 
-     * @param taskName der Name des Tasks.
+     *
+     * @param taskName  der Name des Tasks.
      * @param sleepTime die Zeit in mSec die der Task schläft.
      */
     public JoinAndSleepTask(final String taskName, final int sleepTime) {
@@ -41,12 +41,45 @@ public class JoinAndSleepTask implements Runnable {
         this.sleepTime = sleepTime;
     }
 
+    public void setJoinThread(Thread joinFor) {
+        this.joinFor = joinFor;
+    }
+
     /**
      * Hier wird auf das Ende des fremden Threads gewartet und danach für eine
      * bestimmte Zeit geschlafen. Beide Teile können unterbrochen werden.
      */
     @Override
     public void run() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if (joinFor != null) {
+            LOG.info("Starting wait for other thread ({})", taskName);
+            try {
+                joinFor.join();
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+            LOG.info("Finished wait ({})", taskName);
+        } else {
+            LOG.info("No need to wait ({})", taskName);
+        }
+        LOG.info("Starting to sleep now, ({})", taskName);
+        try {
+            LOG.info("{} sleeps for {} ms", this.taskName, this.sleepTime);
+            Thread.sleep(this.sleepTime);
+        } catch (InterruptedException e) {
+            LOG.error("{} was interrupted while waiting", this.taskName);
+            Thread.currentThread().interrupt();
+        } finally {
+            LOG.info("Ending sleep, ({})", taskName);
+        }
+    }
+
+    public void interruptTask() {
+        if (Thread.currentThread().equals(joinFor)) {
+            LOG.warn("{} interrupted in sleep", taskName);
+        } else {
+            LOG.warn("{} interrupted while waiting for {} to finish", taskName, joinFor.getName());
+        }
+        Thread.currentThread().interrupt();
     }
 }

@@ -22,7 +22,7 @@ import org.slf4j.Logger;
  * Demonstration von Join und Sleep - Aufgabe 3 - N1_EX_ThreadsSynch.
  */
 public final class JoinAndSleep {
-    
+
     private static final Logger LOG = LoggerFactory.getLogger(JoinAndSleep.class);
 
     /**
@@ -30,7 +30,7 @@ public final class JoinAndSleep {
      */
     private JoinAndSleep() {
     }
-    
+
     /**
      * Main-Demo.
      *
@@ -38,6 +38,22 @@ public final class JoinAndSleep {
      * @throws InterruptedException wenn Warten unterbrochen wird.
      */
     public static void main(String[] args) throws InterruptedException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        JoinAndSleepTask t3 = new JoinAndSleepTask("T3", 4000);
+        Thread threadT3 = new Thread(t3);
+
+        JoinAndSleepTask t2 = new JoinAndSleepTask("T2", 3000);
+        t2.setJoinThread(threadT3);
+        Thread threadT2 = new Thread(t2);
+
+        JoinAndSleepTask t1 = new JoinAndSleepTask("T1", 2000);
+        t1.setJoinThread(threadT2);
+        Thread threadT1 = new Thread(t1);
+
+        threadT1.start();
+        LOG.info("Started thread 1");
+        threadT2.start();
+        LOG.info("Started thread 2");
+        threadT3.start();
+        LOG.info("Started thread 3");
     }
 }
