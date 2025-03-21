@@ -20,6 +20,8 @@ package ch.hslu.ad.exercise.n1.bank;
  */
 public final class BankAccount {
 
+    private static final Object LOCK = new Object();
+
     private int balance;
 
     /**
@@ -47,23 +49,29 @@ public final class BankAccount {
         return this.balance;
     }
 
+
     /**
-     * Addiert zum bestehen Kontostand einen Betrag hinzu.
+     * Addiert zum Bestehen Kontostand einen Betrag hinzu.
      *
      * @param amount Einzuzahlender Betrag
      */
     public void deposite(final int amount) {
-        this.balance += amount;
+        synchronized (LOCK) {
+            this.balance += amount;
+        }
     }
 
     /**
      * Überweist einen Betrag vom aktuellen Bankkonto an ein Ziel-Bankkonto.
      *
-     * @param target Bankkonto auf welches der Betrag überwiesen wird.
+     * @param target Bankkonto, auf welches der Betrag überwiesen wird.
      * @param amount zu überweisender Betrag.
      */
+
     public void transfer(final BankAccount target, final int amount) {
-        this.balance -= amount;
-        target.deposite(amount);
+        synchronized (LOCK) {
+            this.balance -= amount;
+            target.deposite(amount);
+        }
     }
 }

@@ -16,6 +16,7 @@
 package ch.hslu.ad.exercise.n1.bank;
 
 import java.util.ArrayList;
+
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 
@@ -59,6 +60,7 @@ public final class DemoBankAccount {
             source.add(new BankAccount(amount));
             target.add(new BankAccount());
         }
+
         final Thread[] threads = new Thread[number * 2];
         for (int i = 0; i < number; i++) {
             threads[i] = new Thread(new AccountTask(source.get(i), target.get(i), amount));
